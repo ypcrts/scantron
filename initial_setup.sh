@@ -21,10 +21,12 @@ ssh-keygen -b 4096 -t rsa -f autossh -q -N ""
 
 # Move public key to the respective location for Ansible.
 echo "[*] Moving public SSH key to the Agent's ansible role (ansible-playbooks/roles/agent/files/autossh.pub)"
+cp autossh.pub ansible-playbooks/roles/master/files/autossh.pub
 mv autossh.pub ansible-playbooks/roles/agent/files/autossh.pub
 
 # Move and rename private key to the respective location for Ansible.
 echo "[*] Moving private SSH key to the Master's ansible role (master/autossh.key)"
+cp autossh ansible-playbooks/roles/agent/files
 mv autossh master/autossh.key
 
 # Create empty scantron_secrets.json from scantron_secrets.json.empty.

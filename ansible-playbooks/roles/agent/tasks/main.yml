@@ -48,6 +48,11 @@
     user: autossh
     key: "{{ lookup('file', 'files/autossh.pub') }}"
 
+- name: Push autossh.key to remote server.
+  authorized_key:
+    user: autossh
+    key: "{{ lookup('file', 'files/autossh.key') }}"
+
 - name: rsync agent files to server.
   synchronize:
     src: ../../../../agent
@@ -127,6 +132,23 @@
     recurse: yes
     mode: 0700
   ignore_errors: True  # For rerun conflicts.
+
+# Must be after chmod/chown of /root/agent folder
+- name: Change owner of autossh.key to autossh and update file permissions.
+  file:
+    path: "{{ agent_dir }}/autossh.key"
+    owner: autossh
+    group: autossh
+    mode: 0600
+
+- name: Upload /etc/rc.local
+  template:
+    src: templates/etc/rc.local.j2
+    dest: /etc/rc.local
+    backup: yes
+    owner: root
+    group: root
+    mode: 0755
 
 - name: Reboot the box in 1 minute.
   command: shutdown -r 1
